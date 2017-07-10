@@ -12,3 +12,4 @@ data_row_PPD <- rename(data_row_PPD, c("variable"="Year"))
 data_row_PPD
 colMeans(is.na(data_row_PPD))
 colMeans(!is.na(data_row_PPD))
+del_data_PPD_col <- data_row_PPD[, which(colMeans(!is.na(data_row_PPD)) >= 0.75)]
