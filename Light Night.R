@@ -1,10 +1,10 @@
 getwd()
-#путь к папке
+#folder path
 setwd("C:/Fishnet_stat/")
 library(rgdal)
-#откриваем .shp файл
-map_ua <- readOGR(dsn = "Fishnet_stat.shp")
-#строем график
+#open .shp file
+map_ua <- readOGR(dsn = "WDC/Source/Fishnet_stat.shp")
+#build a graph
 plot(map_ua)
 head(map_ua@data, n = 20)
 sapply(map_ua@data, class)
@@ -22,7 +22,7 @@ mean_4 <- map_ua$MEAN > 4
 plot(map_ua[ mean_4, ], col = "red", add = TRUE)
 
 
-region_map <- readOGR("Region/Join_map2.shp")
+region_map <- readOGR("WDC/Region/Join_map2.shp")
 plot(region_map)
 head(region_map@data, n = 20)
 region_map@data[region_map$AREA < 5, ]
@@ -51,11 +51,11 @@ wdcu_dataset
 library(readxl)
 library(gplots)
 library(plotly)
-stat_light <- read_excel("Statistic_light.xlsx", 1)
-#функця для нормалізації
+stat_light <- read_excel("WDC/Statistic_light.xlsx", 1)
+#normalization function
 normalize <- function(x) {(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))}
 
-#графік без номалізації
+#graph without normalization
 bar_plot_stat <- plot_ly(stat_light, x = ~stat_light$`Регіон`, y = ~stat_light$Mean, type = 'bar', name = 'Night Light', marker = list(color = 'rgb(49,130,189)')) %>%
   add_trace(y = ~stat_light$`Компонента безпеки життя`, name = 'Компонента безпеки життя', marker = list(color = 'rgb(204,204,204)')) %>%
   add_trace(y = ~stat_light$`Економічна безпека`, name = 'Економічна безпека', marker = list(color = 'rgb(15)')) %>%
@@ -67,7 +67,7 @@ bar_plot_stat <- plot_ly(stat_light, x = ~stat_light$`Регіон`, y = ~stat_light$M
          barmode = 'group')
 bar_plot_stat
 
-#перетворення колонки з типу 'character' в тип 'numeric'
+#convert a column from 'character' to type 'numeric'
 sapply(stat_light, mode)
 mean_light <- transform(stat_light, Mean = as.numeric(Mean))
 sapply(mean_light, class)
@@ -75,7 +75,7 @@ normalize(mean_light$Mean)
 stat_light$`Індекс соціально-інституціонального виміру`
 normalize(as.numeric(stat_light$`Індекс соціально-інституціонального виміру`))
 
-#побудова графіка з нормалізованими данними (від 0 до 1) 
+#plotting with normalized data (from 0 to 1)
 bar_plot_normalize <- plot_ly(stat_light, x = ~stat_light$`Регіон`, y = normalize(mean_light$Mean), type = 'bar', name = 'Night Light', marker = list(color = 'rgb(49,130,189)')) %>%
        add_trace (y = normalize(as.numeric(stat_light$`Компонента безпеки життя`)), name = 'Компонента безпеки життя', marker = list(color = 'rgb(204,204,204)')) %>%
        add_trace(y = normalize(as.numeric(stat_light$`Економічна безпека`)), name = 'Економічна безпека', marker = list(color = 'rgb(15)')) %>%
@@ -85,5 +85,5 @@ bar_plot_normalize <- plot_ly(stat_light, x = ~stat_light$`Регіон`, y = normaliz
           yaxis = list(title = ""),
           margin = list(b = 100),
           barmode = 'group')
-#вивід графіка на екран
+#output plotting
 bar_plot_normalize
